@@ -1,0 +1,30 @@
+version: "3.8"
+name: 'spring-boot-microservices-course'
+services:
+  catalog-service:
+    image: pallatej7/bookstore-catalog-service
+    container_name: catalog-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_URL=jdbc:postgresql://catalog-db:5432/postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+#catalog-db is the container name
+#5432 is container port number
+
+#      - SWAGGER_API_GATEWAY_URL=http://api-gateway:8989/catalog
+#      - MANAGEMENT_TRACING_ENABLED=${MANAGEMENT_TRACING_ENABLED}
+#      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+        #service runs only when catalog-db is up, running, healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+#    labels:
+#      logging: "promtail"
